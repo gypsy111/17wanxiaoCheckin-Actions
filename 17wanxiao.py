@@ -142,9 +142,8 @@ def run():
         if not check_dict:
             return
         else:
-            for check in check_dict:
                 message_content=f"""
-{check}
+{check_dict}
 
 """
                 server_push(sckey,message_content)
