@@ -1,10 +1,9 @@
 # 🌈17wanxiaoCheckin-Actions
+适用于广东环境保护工程职业技术学院的完美校园自动打卡
 
 
 
-**🤺2020.12.04：缝缝补补又几天，欢迎fork使用，感谢反馈，好用别忘记点个star✨**
 
-**🦄2020.12.02：更新校内打卡，（健康打卡，校内打卡）我全都要！**
 
 **💫2020.11.23：支持多人打卡，重写了一下代码**
 
@@ -15,6 +14,8 @@
 感谢 [@zhongbr](https://github.com/zhongbr) 的完美校园逆向登录分析代码的分享：[完美校园模拟登录](https://github.com/zhongbr/wanmei_campus)
 
 之前的抓包部署教程请前往：[完美校园抓包打卡](https://github.com/ReaJason/17wanxiaoCheckin-Actions/blob/master/README_LAST.md)
+
+通过修改[@ReaJason](https://github.com/ReaJason/17wanxiaoCheckin-Actions)的校园
 
 
 
