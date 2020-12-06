@@ -1,24 +1,20 @@
-# 🌈17wanxiaoCheckin-Actions
+# 🌈17wanxiaoCheckin-Actions of huanyuan
 适用于广东环境保护工程职业技术学院的完美校园自动打卡
 
 
-
-
-
-**💫2020.11.23：支持多人打卡，重写了一下代码**
-
-**⚡2020.11.16：本项目已更新，使用本项目，你不需要抓包就可以使用（理论上大概......）**
-
-[中南林业科技大学](https://www.csuft.edu.cn/) 测试可用，欢迎大家 fork 测试使用，如果可用的话，可以开 [issue](https://github.com/ReaJason/17wanxiaoCheckin-Actions/issues) 让更多人知道
+欢迎大家 fork 测试使用，如果可用的话。
 
 感谢 [@zhongbr](https://github.com/zhongbr) 的完美校园逆向登录分析代码的分享：[完美校园模拟登录](https://github.com/zhongbr/wanmei_campus)
 
-之前的抓包部署教程请前往：[完美校园抓包打卡](https://github.com/ReaJason/17wanxiaoCheckin-Actions/blob/master/README_LAST.md)
+抓包部署教程请前往：[完美校园抓包打卡](https://github.com/ReaJason/17wanxiaoCheckin-Actions/blob/master/README_LAST.md)
 
-通过修改[@ReaJason](https://github.com/ReaJason/17wanxiaoCheckin-Actions)的校园
+非常感谢[@ReaJason](https://github.com/ReaJason/17wanxiaoCheckin-Actions)的分享，膜拜!!!!
 
+通过修改[@ReaJason](https://github.com/ReaJason/17wanxiaoCheckin-Actions)的项目，实现了环院的完美校园签到。
 
+**消息推送做的很拉跨，欢迎各位大佬来做美化
 
+以下是原项目的食用教程。
 ## Q&A
 
 **1、fork之后，修改README.md并没有触发actions**？
@@ -29,33 +25,84 @@
 
 
 
-**2、提交信息中有一部分信息无法自动填写，我不会代码怎么办？**
+**1、修改部分代码 环院与大佬的学校数据请求不一致**
 
-啊这，这只能修改代码加入我们想要设置的值，请进入17wanxiao.py找到地方按如下修改代码，
-`由于python的缩进很严格，所以建议复制粘贴修改`
+原代码，
+```def get_post_json(token, jsons):
+    retry = 0
+    while retry < 3:
+        try:
+            # 如果不请求一下这个地址，token就会失效
+            requests.post("https://reportedh5.17wanxiao.com/api/clock/school/getUserInfo", data={'token': token})
+            res = requests.post(url="https://reportedh5.17wanxiao.com/sass/api/epmpics", json=jsons, timeout=10).json()
+        except BaseException:
+            retry += 1
+            logging.warning('获取完美校园打卡post参数失败，正在重试...')
+            time.sleep(1)
+            continue
+        if res['code'] != '10000':
+            return None
+        data = json.loads(res['data'])
+        # print(data)
+        post_dict = {
+            "areaStr": data['areaStr'],
+            "deptStr": data['deptStr'],
+            "deptid": 208119,    #data['deptStr']['deptid'],
+            "customerid": data['customerid'],
+            "userid": data['userid'],
+            "username": data['username'],
+            "stuNo": data['stuNo'],
+            "phonenum": data['phonenum'],
+            "templateid": data['templateid'],
+            "updatainfo": [{"propertyname": i["propertyname"], "value": i["value"]} for i in
+                           data['cusTemplateRelations']],
+            "checkbox": [{"description": i["decription"], "value": i["value"]} for i in
+                         data['cusTemplateRelations']],
+        }
+        # print(json.dumps(post_dict, sort_keys=True, indent=4, ensure_ascii=False))
+        # 在此处修改字段
+        logging.info('获取完美校园打卡post参数成功')
+        return post_dict
+    return None 
+ ```
+ 
+ 修改后
+ ```
+ def get_post_json(token, jsons):
+    retry = 0
+    while retry < 3:
+        try:
+            res1 = requests.post(url="https://reportedh5.17wanxiao.com/api/clock/school/getUserInfo", data={'token': token}).json()
+            res = requests.post(url="https://reportedh5.17wanxiao.com/sass/api/epmpics", json=jsons, timeout=10).json()
+        except BaseException:
+            retry += 1
+            logging.warning('获取完美校园打卡post参数失败，正在重试...')
+            time.sleep(1)
+            continue
+        if res['code'] != '10000':
+            return None
+        data = json.loads(res['data'])
+        # print(data)
+        post_dict = {
+            "areaStr": data['areaStr'],
+            "deptStr": {"deptStr":res1['userInfo']["classId"],"text":res1['userInfo']["classDescription"]},
+            "deptid": res1['userInfo']["classId"],
+            "customerid": res1['userInfo']['customerId'],
+            "userid": res1['userInfo']['userId'],
+            "username": res1['userInfo']['username'],
+            "stuNo": res1['userInfo']['stuNo'],
+            "phonenum": "13711278768",    #该项为本人的联系号码
+            "templateid": "orderFood",
+            "updatainfo": [{"propertyname":"tm1","value":"36.4"},{"propertyname":"heaithinfo","value":"A.正常，无症状"},{"propertyname":"sshealth","value":"A.健康"},{"propertyname":"todayhealth","value":"B.偶有情绪波动但能自我调节"},{"propertyname":"iseating","value":"否"},{"propertyname":"isoutschool","value":""},{"propertyname":"seject","value":""}],
+        }
+        logging.info('获取完美校园打卡post参数成功')
+        return post_dict
+    return None
+ ```
 
-```python
-# 获取健康打卡的参数
-json1 = {"businessType": "epmpics",
-        "jsonData": {"templateid": "pneumonia", "token": token},
-        "method": "userComeApp"}
-post_dict = get_post_json(token, json1)
-
-for j in post_dict['updatainfo']:  # 这里获取打卡json字段的打卡信息，微信推送的json字段
-    if j['propertyname'] == 'temperature':  # 找到propertyname为temperature的字段
-    	j['value'] = '36.2'   # 由于原先为null，这里直接设置36.2（根据自己学校打卡选项来）
-    if j['propertyname'] == '举一反三即可':
-        j['value'] = '举一反三即可'
-
-if not post_dict:
-    errmsg = '获取完美校园打卡post参数失败'
-    logging.warning(errmsg)
-    return False
-```
 
 
-
-**3、我们学校要求打卡的时间不一样，这个自动运行的时间该怎么修改？**
+**2、自动运行的时间该怎么修改**
 
 进入.github/workflows/run.yml修改时间
 
@@ -83,11 +130,7 @@ on:
 
 1. 完美校园模拟登录获取 token
 2. 自动获取上次提交的打卡数据
-3. 自动化任务分三次运行（ps：没有校内打卡就不会校内打卡，没有晚上打卡也不会晚上打卡的）
-   - `上午六点`：健康打卡，上午校内打卡；
-   - `中午十二点`：健康打卡，下午校内打卡；
-   - `下午五点`：健康打卡，晚上校内打卡`
-4. 微信推送打卡消息
+3. 微信推送打卡消息(推送做得很拉跨)
 
 
 
@@ -99,42 +142,14 @@ on:
 
 本项目也就不起作用了，可以试试打一次卡然后再进入看有无自动填充信息。
 
-```python
-def get_post_json(self, token):
-    jsons = {"businessType": "epmpics",
-    "jsonData": {"templateid": "pneumonia", "token": token},
-    "method": "userComeApp"}
-    try:
-        # 如果不请求一下这个地址，token就会失效
-        requests.post("https://reportedh5.17wanxiao.com/api/clock/school/getUserInfo", data={'token': token})
-        res = requests.post(url="https://reportedh5.17wanxiao.com/sass/api/epmpics", json=jsons).json()
-    except:
-        return None
-    if res['code'] != '10000':
-        return None
-        data = json.loads(res['data'])
-        post_dict = {
-        "areaStr": data['areaStr'],
-        "deptStr": data['deptStr'],
-        "deptid": data['deptStr']['deptid'],
-        "customerid": data['customerid'],
-        "userid": data['userid'],
-        "username": data['username'],
-        "stuNo": data['stuNo'],
-        "phonenum": data['phonenum'],
-        "templateid": data['templateid'],
-        "updatainfo": [{"propertyname": i["propertyname"], "value": i["value"]} for i in
-        data['cusTemplateRelations']],
-        "checkbox": [{"description": i["decription"], "value": i["value"]} for i in
-        data['cusTemplateRelations']],
-        }
-        # print(json.dumps(post_dict, sort_keys=True, indent=4, ensure_ascii=False))
-        # 在这里修改没有填写的数据，遍历post_dict['updatainfo']修改就行
-        logging.info('获取完美校园打卡post参数成功')
-        return post_dict
+```res1 = requests.post(url="https://reportedh5.17wanxiao.com/api/clock/school/getUserInfo", data={'token': token}).json()
+#这里请求的是其中的打卡地址
+res = requests.post(url="https://reportedh5.17wanxiao.com/sass/api/epmpics", json=jsons, timeout=10).json()#其中jsons的数据也修改了
+#这里请求的是部分数据，没有的自行不全，其中"updatainfo"的数据响应的数据量太大，所以直接填上去算了
 ```
 
 
+以下是原项目得食用方法
 
 #### 三、使用方法
 
