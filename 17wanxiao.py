@@ -147,7 +147,7 @@ def run():
 
 """
                 server_push(sckey,message_content)
-
+                time.sleep(300)
 
 
 if __name__ == '__main__':
