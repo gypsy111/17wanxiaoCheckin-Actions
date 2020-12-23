@@ -91,7 +91,7 @@
             "userid": res1['userInfo']['userId'],
             "username": res1['userInfo']['username'],
             "stuNo": res1['userInfo']['stuNo'],
-            "phonenum": "13711278768",    #该项为本人的联系号码
+            "phonenum": "150xxxxxxxx",    #该项为本人的联系号码
             "templateid": "orderFood",
             "updatainfo": [{"propertyname":"tm1","value":"36.4"},{"propertyname":"heaithinfo","value":"A.正常，无症状"},{"propertyname":"sshealth","value":"A.健康"},{"propertyname":"todayhealth","value":"B.偶有情绪波动但能自我调节"},{"propertyname":"iseating","value":"否"},{"propertyname":"isoutschool","value":""},{"propertyname":"seject","value":""}],
         }
