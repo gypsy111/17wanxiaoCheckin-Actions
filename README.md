@@ -208,7 +208,7 @@ res = requests.post(url="https://reportedh5.17wanxiao.com/sass/api/epmpics", jso
 
    
 
-6. 查看 `Actions` 运行情况，以及微信推送情况，至此每日六点多将会自行打卡
+6. 查看 `Actions` 运行情况，以及微信推送情况，至此每日六点多将会自行打卡。
 
    
 
