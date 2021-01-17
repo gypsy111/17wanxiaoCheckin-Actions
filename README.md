@@ -1,4 +1,4 @@
-# 🌈17wanxiaoCheckin-Actions of huanyuan
+# 🌈17wanxiaoCheckin-Actions of huanyuan Github Action被ban，转战腾讯云
 适用于广东环境保护工程职业技术学院的完美校园自动打卡
 
  
